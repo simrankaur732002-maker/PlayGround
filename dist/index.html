@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no" />
+  <meta name="theme-color" content="#0c1119" />
+  <meta name="description" content="Harbor City — a living open-world city life simulator. Explore, work, shop, drive, and build a life." />
+  <title>Harbor City — Open World Life Sim</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230c1119'/%3E%3Cpath d='M14 46V26l9-7 9 7v20M38 46V18l10-8 10 8v28' fill='none' stroke='%2358e6d2' stroke-width='3'/%3E%3C/svg%3E" />
+  <script type="module" crossorigin src="./assets/index-C5UqbvSL.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-B-MJPE9E.css">
+</head>
+<body>
+  <div id="game" aria-label="Harbor City 3D game"></div>
+  <div class="screen-fx" aria-hidden="true">
+    <div class="vignette"></div>
+    <div class="grain"></div>
+  </div>
+
+  <section id="startScreen" class="start-screen">
+    <div class="start-topbar">
+      <div class="live-pill"><i></i> LIVE CITY</div>
+      <div class="start-top-actions">
+        <span id="saveHint">No save yet</span>
+        <button id="soundToggleStart" class="icon-btn" aria-label="Toggle sound">♪</button>
+      </div>
+    </div>
+
+    <div class="start-content">
+      <div class="eyebrow">A LIVING OPEN-WORLD LIFE SIM</div>
+      <h1 class="logo"><span>HARBOR</span><span>CITY</span></h1>
+      <p class="tagline">Clock in. Cash out. Find your corner of the city.</p>
+
+      <div class="start-features">
+        <span>🚶 Explore</span>
+        <span>💼 Work</span>
+        <span>🚗 Drive</span>
+        <span>🛍️ Shop</span>
+        <span>🏡 Build a life</span>
+      </div>
+
+      <div class="start-actions">
+        <button id="startBtn" class="primary-btn">Play Now <b>→</b></button>
+        <button id="howBtn" class="ghost-btn">How to play</button>
+      </div>
+      <p class="start-note" id="startNote">A full day and night cycle. Your progress saves automatically.</p>
+
+      <div class="start-controls">
+        <div><kbd>WASD</kbd><span>Walk</span></div>
+        <div><kbd>Mouse</kbd><span>Look</span></div>
+        <div><kbd>E</kbd><span>Interact</span></div>
+        <div><kbd>Tab</kbd><span>Phone</span></div>
+      </div>
+    </div>
+
+    <div class="start-footer">
+      <div class="city-stats">
+        <div><strong>25</strong><span>city blocks</span></div>
+        <div><strong>18</strong><span>places to be</span></div>
+        <div><strong>3</strong><span>ways to earn</span></div>
+      </div>
+      <div class="start-credit">HARBOR CITY · A procedural open world</div>
+    </div>
+
+    <div id="loadingBar" class="loading-bar"><i></i></div>
+  </section>
+
+  <div id="hud" class="hud hidden">
+    <div class="hud-top">
+      <div class="player-card glass">
+        <div class="avatar"><span>AC</span><i class="online-dot"></i></div>
+        <div class="player-meta">
+          <div class="player-name">Alex Chen <span class="tag">RESIDENT</span></div>
+          <div class="player-time"><span id="dayLabel">MON 5:32 PM</span><i></i><span id="weatherLabel">Golden hour</span></div>
+        </div>
+        <div class="money-chip"><small>CASH</small><strong id="cashLabel">$250</strong></div>
+      </div>
+
+      <div class="minimap-card glass">
+        <div class="map-head"><span class="map-loc" id="locationLabel">Harbor Mall</span><span class="map-compass">N</span></div>
+        <canvas id="minimap" width="320" height="320"></canvas>
+        <div class="map-foot"><span id="districtLabel">CENTER CITY</span><span id="interiorTag" class="hidden">INSIDE</span></div>
+      </div>
+    </div>
+
+    <div id="objectivePanel" class="objective glass hidden">
+      <div id="objIcon" class="objective-icon">📦</div>
+      <div class="objective-copy">
+        <small id="objTag">ACTIVE GIG</small>
+        <strong id="objText">Collect the package</strong>
+        <span id="objSub">Byte Café · 82 m</span>
+      </div>
+      <div id="objTimer" class="objective-timer">04:00</div>
+    </div>
+
+    <div class="hud-bottom-left">
+      <div class="status-card glass">
+        <div class="status-row"><span class="stat-ico">♥</span><div class="stat-track"><i id="barHealth" class="health"></i></div><b id="valHealth">100</b></div>
+        <div class="status-row"><span class="stat-ico">⚡</span><div class="stat-track"><i id="barEnergy" class="energy"></i></div><b id="valEnergy">100</b></div>
+        <div class="status-row"><span class="stat-ico">🍔</span><div class="stat-track"><i id="barHunger" class="hunger"></i></div><b id="valHunger">100</b></div>
+        <div class="status-row"><span class="stat-ico">☺</span><div class="stat-track"><i id="barMood" class="mood"></i></div><b id="valMood">100</b></div>
+      </div>
+      <div class="hint-line" id="hintLine"><span class="pulse-dot"></span> Walk into a glowing door and press <kbd>E</kbd></div>
+    </div>
+
+    <div class="hud-bottom-right">
+      <div id="interactPrompt" class="interact-prompt glass hidden">
+        <span class="key" id="promptKey">E</span>
+        <div><strong id="promptLabel">Enter Harbor Mall</strong><small id="promptSub">Press to go inside</small></div>
+      </div>
+      <div class="right-actions">
+        <button id="phoneBtn" class="round-btn" aria-label="Open phone"><span>▤</span><small>PHONE</small></button>
+        <button id="helpBtn" class="round-btn small" aria-label="Help">?</button>
+      </div>
+      <div class="desktop-hint"><kbd>Tab</kbd> phone &nbsp;·&nbsp; <kbd>Esc</kbd> pause</div>
+    </div>
+
+    <div id="toastStack" class="toast-stack"></div>
+
+    <div id="dialoguePanel" class="dialogue glass hidden">
+      <div class="dialogue-avatar" id="dialogueAvatar">👮</div>
+      <div class="dialogue-copy"><strong id="dialogueName">Officer Reed</strong><p id="dialogueText">Evening.</p></div>
+      <button id="dialogueNext" class="mini-btn">Continue</button>
+    </div>
+
+    <div id="mobileControls" class="mobile-controls">
+      <div id="joystick" class="joystick"><div class="joystick-knob"></div></div>
+      <div class="mobile-actions">
+        <button id="mobileAction" class="mobile-action">E<small>INTERACT</small></button>
+        <button id="mobileSprint" class="mobile-sprint">⚡<small>RUN</small></button>
+      </div>
+    </div>
+  </div>
+
+  <div id="phonePanel" class="phone-panel hidden">
+    <div class="phone-shell">
+      <div class="phone-notch"></div>
+      <div class="phone-head">
+        <div><small id="phoneDay">MON · 5:32 PM</small><strong>My Phone</strong></div>
+        <div class="phone-cash" id="phoneCash">$250</div>
+        <button id="phoneClose" class="icon-btn" aria-label="Close phone">✕</button>
+      </div>
+      <div class="phone-tabs">
+        <button class="phone-tab active" data-tab="map">Map</button>
+        <button class="phone-tab" data-tab="inventory">Bag</button>
+        <button class="phone-tab" data-tab="wardrobe">Wear</button>
+        <button class="phone-tab" data-tab="home">Home</button>
+        <button class="phone-tab" data-tab="jobs">Jobs</button>
+        <button class="phone-tab" data-tab="settings">More</button>
+      </div>
+      <div class="phone-body">
+        <div class="phone-tab-page active" data-page="map">
+          <div class="page-title"><span>City Map</span><small>tap a place to set a waypoint</small></div>
+          <canvas id="bigMap" width="640" height="640"></canvas>
+          <div class="map-legend">
+            <span><i style="background:#ffb45c"></i> Shops</span>
+            <span><i style="background:#58e6d2"></i> You</span>
+            <span><i style="background:#ff7c6b"></i> Gig</span>
+          </div>
+          <div class="map-tip">Tip: the minimap tracks your active gig automatically.</div>
+        </div>
+        <div class="phone-tab-page" data-page="inventory">
+          <div class="page-title"><span>Your Bag</span><small id="bagCount">0 items</small></div>
+          <div id="inventoryList" class="inventory-list"></div>
+        </div>
+        <div class="phone-tab-page" data-page="wardrobe">
+          <div class="page-title"><span>Wardrobe</span><small>look good, feel good</small></div>
+          <div class="outfit-preview">
+            <div class="outfit-person"><i id="outfitHead"></i><b id="outfitShirt"></b><em id="outfitPants"></em></div>
+            <div><strong id="outfitName">Harbor Casual</strong><span id="outfitBonus">+0 mood</span></div>
+          </div>
+          <div id="wardrobeList" class="wardrobe-list"></div>
+        </div>
+        <div class="phone-tab-page" data-page="home">
+          <div class="page-title"><span>Home</span><small>a place to land</small></div>
+          <div id="homeStatus" class="home-status"></div>
+          <div class="home-actions">
+            <button id="sleepHomeBtn" class="wide-btn">Sleep until morning</button>
+            <button id="goHomeBtn" class="wide-btn secondary">Fast travel home</button>
+          </div>
+          <div class="home-tip">Buy Maple House at Key &amp; Stone in the south district. Sleep restores energy and advances time.</div>
+        </div>
+        <div class="phone-tab-page" data-page="jobs">
+          <div class="page-title"><span>Gig Board</span><small>earn while the city moves</small></div>
+          <div id="jobList" class="job-list"></div>
+        </div>
+        <div class="phone-tab-page" data-page="settings">
+          <div class="page-title"><span>More</span><small>settings &amp; help</small></div>
+          <div class="settings-list">
+            <button id="soundToggle" class="setting-row"><span>🔊 Sound &amp; ambience</span><b id="soundState">ON</b></button>
+            <button id="resetSaveBtn" class="setting-row danger"><span>↺ Reset progress</span><b>RESET</b></button>
+            <button id="helpBtn2" class="setting-row"><span>? How to play</span><b>OPEN</b></button>
+          </div>
+          <div class="settings-note">Harbor City saves to this browser automatically. Your home, wardrobe, vehicles, pet, and cash persist between visits.</div>
+        </div>
+      </div>
+      <div class="phone-homebar"></div>
+    </div>
+  </div>
+
+  <div id="shopModal" class="modal-layer hidden">
+    <div class="modal-card shop-card">
+      <div class="modal-head">
+        <div class="shop-badge" id="shopBadge">🛍️</div>
+        <div><small id="shopCategory">SHOPPING</small><h2 id="shopName">Harbor Mall</h2><p id="shopTagline">Everything you need.</p></div>
+        <div class="shop-balance"><small>YOUR CASH</small><strong id="shopCash">$250</strong></div>
+        <button class="icon-btn modal-close" data-close="shop">✕</button>
+      </div>
+      <div id="shopItems" class="shop-grid"></div>
+      <div class="modal-foot"><span id="shopFootNote">Purchases are instant. Food and services apply immediately.</span><button class="ghost-btn" data-close="shop">Done</button></div>
+    </div>
+  </div>
+
+  <div id="jobModal" class="modal-layer hidden">
+    <div class="modal-card job-card">
+      <div class="modal-head">
+        <div class="shop-badge">💼</div>
+        <div><small>CITYWORKS GIG BOARD</small><h2>Pick up a shift</h2><p>Three honest ways to make rent in Harbor City.</p></div>
+        <button class="icon-btn modal-close" data-close="jobs">✕</button>
+      </div>
+      <div id="jobModalList" class="job-pick-list"></div>
+      <div class="modal-foot"><span>Gigs can also be started from the Jobs tab on your phone.</span><button class="ghost-btn" data-close="jobs">Later</button></div>
+    </div>
+  </div>
+
+  <div id="baristaModal" class="modal-layer hidden">
+    <div class="modal-card barista-card">
+      <div class="barista-top">
+        <div><small>BYTE CAFÉ · SHIFT IN PROGRESS</small><h2>Keep the line moving</h2></div>
+        <div class="barista-score"><span id="baristaScore">0 / 5</span><small>ORDERS</small></div>
+      </div>
+      <div class="barista-timer"><i id="baristaTimer"></i></div>
+      <div class="customer-card">
+        <div class="customer-avatar" id="customerAvatar">🧑</div>
+        <div><small>NEXT CUSTOMER</small><strong id="customerOrder">An oat latte, please.</strong><span id="customerHint">Pick the matching order.</span></div>
+      </div>
+      <div id="baristaOptions" class="barista-options"></div>
+      <div class="barista-foot"><span id="baristaFeedback">Make five orders before the timer runs out.</span><span class="barista-tip">Correct orders add time.</span></div>
+    </div>
+  </div>
+
+  <div id="howModal" class="modal-layer hidden">
+    <div class="modal-card how-card">
+      <div class="modal-head">
+        <div class="shop-badge">🎮</div>
+        <div><small>WELCOME TO HARBOR CITY</small><h2>How to play</h2><p>There is no wrong way to spend a day.</p></div>
+        <button class="icon-btn modal-close" data-close="how">✕</button>
+      </div>
+      <div class="how-grid">
+        <div><span>01</span><strong>Move</strong><p><kbd>WASD</kbd> to walk, <kbd>Shift</kbd> to run. On mobile, use the left joystick.</p></div>
+        <div><span>02</span><strong>Look</strong><p>Move the mouse or drag the right side of the screen. Click the world to lock the cursor.</p></div>
+        <div><span>03</span><strong>Interact</strong><p><kbd>E</kbd> enters shops, talks to people, and gets into cars. The prompt at the bottom shows what is nearby.</p></div>
+        <div><span>04</span><strong>Live</strong><p>Eat when hungry, sleep when tired, shop for clothes, adopt a pet, buy a car, and buy Maple House.</p></div>
+        <div><span>05</span><strong>Work</strong><p>Open the Jobs tab or visit CityWorks. Courier, cab, and café shifts all pay cash.</p></div>
+        <div><span>06</span><strong>Phone</strong><p><kbd>Tab</kbd> opens your phone: map, bag, wardrobe, home, jobs, and settings.</p></div>
+      </div>
+      <div class="modal-foot"><span>Take your time. The city keeps moving.</span><button class="primary-btn" data-close="how">Got it</button></div>
+    </div>
+  </div>
+
+  <div id="pauseModal" class="modal-layer hidden">
+    <div class="modal-card pause-card">
+      <div class="pause-mark">II</div>
+      <h2>City paused</h2>
+      <p>Harbor City will be right here.</p>
+      <div class="pause-actions">
+        <button id="resumeBtn" class="primary-btn">Resume</button>
+        <button id="pausePhoneBtn" class="ghost-btn">Open phone</button>
+        <button id="pauseHelpBtn" class="ghost-btn">How to play</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="deathModal" class="modal-layer hidden">
+    <div class="modal-card pause-card">
+      <div class="pause-mark">+</div>
+      <h2>You need a doctor</h2>
+      <p>Harbor General patched you up. A small fee was charged.</p>
+      <button id="respawnBtn" class="primary-btn">Wake up at the hospital</button>
+    </div>
+  </div>
+
+  <div id="fade" class="fade"></div>
+</body>
+</html>
